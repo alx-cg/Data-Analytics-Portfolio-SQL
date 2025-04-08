@@ -1,0 +1,260 @@
+# CLEANING DATA ON SQL
+## 1.1	DUPLICATES
+
+### EXAMPLE 1: FILM
+
+SELECT film_id,
+	   title,
+	   description,
+	   release_year,
+	   language_id,
+	   rental_duration,
+	   rental_rate,
+	   length,
+	   replacement_cost,
+	   rating,
+	   last_update,
+	   special_features,
+	   fulltext,
+	   COUNT(*)
+FROM film
+GROUP BY film_id,
+	   title,
+	   description,
+	   release_year,
+	   language_id,
+	   rental_duration,
+	   rental_rate,
+	   length,
+	   replacement_cost,
+	   rating,
+	   last_update,
+	   special_features,
+	   fulltext
+HAVING COUNT (*) >1 --no result set means no duplicates
+
+### EXAMPLE 2: CUSTOMER
+ 
+Output: No duplicates
+Script
+SELECT customer_id,
+	   store_id,
+	   first_name
+	   last_name, 
+	   email,
+	   address_id,
+	   activebool,
+	   create_date,
+	   last_update,
+	   active,
+	   COUNT(*)
+FROM customer
+GROUP BY customer_id,
+	   store_id,
+	   first_name,
+	   last_name, 
+	   email,
+	   address_id,
+	   activebool,
+	   create_date,
+	   last_update,
+	   active
+HAVING COUNT (*) >1 --no result set means no duplicates
+
+### DEALING WITH DUPLICATES
+
+### CLEANING DUPLICATES: 
+After identifying whether or not duplicates exist, I would then create a view to flag the duplicates and be able to delete them like so: 
+
+CREATE VIEW  AS duplicate_customers 
+SELECT 
+    customer_id,
+    store_id,
+    first_name,
+    last_name,
+    email,
+    address_id,
+    activebool,
+    create_date,
+    last_update,
+    active,
+    ROW_NUMBER() OVER ( -- ROW_NUMBER creates a column that assigns a number to each row on the view per the established partition, meaning that if there are more than one records of the same, the second record will be labeled as ‘2’ and so forth. Therefore, a record that has no duplicates is only labeled as ‘1’
+        PARTITION BY store_id, first_name, last_name, email  --PARTITION BY would determine how to group the records in the view and single out the duplicates. In this case, the partition would organize the records by store_id, the customer name, and email, thus only focusing on main identifiers of the customer. 
+        ORDER BY last_update DESC – ORDER BY in this case would order the records in descending order by their last update, meaning that the newest records are at the top and are therefore labeled as ‘1’ per the ROW_NUMBER command. I.e.: the older record will be the duplicate.  
+    ) AS row_num
+FROM customer;
+
+After this you would delete the records like so: 
+DELETE FROM duplicate_customers  --this is deleting the records from the view, not the base table
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM duplicate_customers
+    WHERE row_num > 1  --this part of the script is the one that scans for the row_num that is larger than 1, i.e. the duplicates
+);
+
+Finally, you run the WHERE x>1 script again to check for duplicates and make sure you got rid of them all. 
+SELECT *
+FROM duplicate_customers
+WHERE row_num > 1;
+
+
+-----------
+
+
+## 1.2	NON-UNIFORM DATA
+
+### FILM 
+
+
+SELECT DISTINCT film_id,
+	   title,
+	   description,
+	   release_year,
+	   language_id,
+	   rental_duration,
+	   rental_rate,
+	   length,
+	   replacement_cost,
+	   rating,
+	   last_update,
+	   special_features,
+	   fulltext
+FROM film
+
+### CUSTOMER 
+
+ADDING ‘LIKE’ command to verify format of emails 
+ 
+Output after LIKE statement: Uniform values (same number of records as without LIKE statment)
+SCRIPT
+--show unique records to identify non-uniformity
+SELECT DISTINCT customer_id,
+	   store_id,
+	   first_name,
+	   last_name, 
+	   email,
+	   address_id,
+	   activebool,
+	   create_date,
+	   last_update,
+	   active
+FROM customer
+WHERE email LIKE '%@%' --adding like command to verify that all unique values have a correct email format
+
+### CLEANING NON-UNIFORM DATA
+
+After identifying all possible values you would have to UPDATE them to only one: 
+
+UPDATE film
+SET rating = 'G'
+WHERE rating IN ('gen',
+                 'g',
+                 'General')
+
+However, you would first need to make sure that the data is inconsistent to begin with using LIKE statements like the one that was used in the script for the customers table. In this table I wanted to make sure that all email addresses were consistent and I tested this by comparing the number of records to the number of records if I applied the LIKE statement searching for the ‘@’ sign. 
+However, this can only be done with certain columns where the data has categories or structure. For example, if it is numerical data, you can make sure by figuring out if all the data falls within the acceptable range by using “BETWEEN” or “IN” statements. For unstructured data like names and addresses it is more complex. 
+
+
+
+--------------------
+
+
+## 1.3	 NULL VALUES
+
+### FILM
+
+SELECT *
+FROM film
+WHERE film_id IS NULL 
+      OR title IS NULL 
+ 	  OR description IS NULL
+	  OR release_year IS NULL
+	  OR language_id IS NULL
+	  OR rental_duration IS NULL
+	  OR rental_rate IS NULL
+	  OR length IS NULL
+	  OR replacement_cost IS NULL
+	  OR rating IS NULL
+	  OR last_update IS NULL
+	  OR special_features IS NULL
+	  OR fulltext IS NULL;
+
+
+
+### CUSTOMER
+
+SELECT *
+FROM customer
+WHERE customer_id IS NULL
+	  OR store_id IS NULL
+	  OR first_name IS NULL
+	  OR last_name IS NULL
+	  OR email IS NULL
+	  OR address_id IS NULL
+	  OR activebool IS NULL
+	  OR create_date IS NULL
+	  OR last_update IS NULL
+	  OR active IS NULL;
+
+
+### CLEANING MISSING DATA
+
+Cleaning missing data would be the hardest because we would have to corroborate the data at the source, depending on what type of data is missing. If it is in the customer’s table for example, and a name is missing but we have everything else, we can look up in older records with its customer id, or with the email or address. If it’s something like the language id in the film table, we can corroborate by consulting the film directly. 
+Depending on the type of information that is missing the input is either manual or in batches. 
+If it is in batches, it would be like it was illustrated in the reading:
+
+--imputing missing values with the AVG value
+
+UPDATE tablename
+SET = AVG(col1)
+WHERE col1 IS NULL
+
+If it were manual and one by one (as with a name, for example), you would have to do like so
+
+--imputing missing value manually 
+
+UPDATE customer
+SET first_name = ‘Emma’
+SET last_name = ‘Ratri’
+WHERE customer_id = 23;
+
+
+------------------------
+
+# 2. SUMMARIZING DATA
+
+## 2.1 FILM 
+
+### NUMERICAL VALUES
+ 
+
+min_release_year	max_release_year	avg_realease_year	count_release_year_values	min_rental_duration	max_rental_duration	avg_rental_duration
+2006	2006	2006.0	1000	3	7	4.985
+count_rental_duration_values	min_rent	max_rent	avg_rent	count_rent_values	min_length	max_length
+1000	0.99	4.99	2.98	1000	46	185
+avg_length	count_length_values	min_replacement_cost	max_replacement_cost	avg_replacenemt_cost	count_replacement_cost_values	count_rows
+115.272	1000	9.99	29.99	19.984	1000	1000
+
+
+### NON-NUMERICAL VALUES
+
+
+mode_title	mode_description	mode_rating	mode_last_update	mode_special_features	mode_fulltext
+Academy Dinosaur	A Action-Packed Character Study of a Astronaut And a Explorer who must Reach a Monkey in A MySQL Convention	PG-13	2013-05-26 14:50:58.951	{Trailers,Commentaries,"Behind the Scenes"}	'baloon':19 'confront':14 'documentari':5 'feminist':8,11,16 'mile':2 'must':13 'spi':1 'thrill':4
+
+## 2.2 CUSTOMER
+
+### NUMERICAL
+ 
+min_active	max_active	avg_active	count_active	count_rows
+0	1	0.97495826377295492487	599	599
+
+NOTE: There is one non-active customer, meaning a record is probably flagged as deleted. 
+
+
+### NON NUMERICAL 
+ 
+mode_firstname	mode_lastname	mode_email	mode_activebool	mode_create_date	mode_last_update
+Jamie	Abney	aaron.selby@sakilacustomer.org	TRUE	14/02/2006	2013-05-26 14:49:45.738
+
+
