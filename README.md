@@ -1,47 +1,32 @@
-## Instacart Sales and Market Analysis
+# Rockbuster Stealth SQL Analysis
+This project emulates a data analysis project for a movie rental company called Rockbuster Stealth LLC. The context of the project is that the company faces competition from streaming services and the management team is weighing the possibility of using its existing movie licenses to launch an online rental service to stay competitive. 
 
-## Project Summary
-This repository emulates the analysis of a fictitious online supermarket's orders data (Instacart), which operates through an app.  
-The goal of the analyst in this project is to uncover more information about their sales patterns and consumer behavior. The task is to perform initial and exploratory analysis in order to derive insights and suggest strategies for better market segmentation. 
+In this project, the analyst plays the role of the Business Intelligence department, and is tasked with helping the development of this new launch strategy by investigating in depth the company's database, which spans across departments, from inventory to customer insights. 
 
-The assumption of this exercise is that Instacart wants t o target different kinds of customers with marketing campaigns and see whether they have an effect on sales. The analysis aims to inform what this strategy might look like. 
-
-The metrics analyzed in this repository range, but are not limited to identifying spending patterns across time, most successfully performing departments, and differences in consumer behavior depending on their brand loyalty, family status, age, income and region.  
-
-## Key Project Questions 
-- What are the busiest days of the week and hours of the day?
-- At what times do customers spend the most money?
-- With Instacart’s wide range of product prices, what recommendations can simplify price range groupings to better guide marketing efforts?
-- Are there specific types of products that are more popular than others?
-- How is brand loyalty distributed among users?
-- Do ordering habits vary based on a customer’s loyalty status?
-- Are there differences in ordering habits based on a customer’s region?
-- Is there a connection between age and family status regarding ordering habits?
-- What classifications can be derived from demographic information, such as age, income, types of goods, and family status?
-- How do ordering habits differ among various customer profiles?
+## Key Questions
+- Which movies contributed the most/least to revenue gain?
+- What was the average rental duration for all videos?
+- Which countries are Rockbuster customers based in?
+- Where are customers with a high lifetime value based?
+- Do sales figures vary between geographic regions?
 
 ## Data sources
-- The original datasets were provided by CareerFoundry but can be accessed and cited as follows:
-  - “The Instacart Online Grocery Shopping Dataset 2017”, Accessed from www.instacart.com/datasets/grocery-shopping-2017 via Kaggle on [11/03/2025].
+- The  datasets were provided by CareerFoundry.
 
 ## File types
-- Jupyter Notebook (IPYNB File)
 - PDF
-- Images (PNG File)
+- MP4
 - Excel Worksheets
 
-## Folders
+## Prerequisites
+- pgAdmin4
+- PostgreSQL
+- Tableau Public
+
+## Folders and Contents
 The folders of this repository contain the following contents: 
 - 01 Project Management: Documentation and project directives (Project brief)
-- 02 Scripts: Jupyter notebooks (Python code)
-- 03 Anaylsis: Visualizations (PNG exported files).
-- 04 Sent to customer: Final report and visualizations delivered to the customer where the project's key questions are answered along visualizations, as well as detailed documentation of the project's development. 
+- 02 SQL Scrpts: PDF of scripts
+- 03 Sent to customer: Technical file, data dictionary and presentation delivered to the customer where the project's key questions are answered along visualizations, as well as detailed documentation of the project's development. 
 
-### Prerequisites
-The following libraries are necessary for the scripts to function
-- pandas
-- numpy
-- seaborn
-- os
-- matplotlib
-  
+
