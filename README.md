@@ -2,7 +2,7 @@
 
 ## Project Summary
 This repository emulates the analysis of a fictitious online supermarket's orders data (Instacart), which operates through an app.  
-The goal of the analyst in this project is to uncover more information about their sales patterns and consumer behavior. THe task is to perform initial and exploratory analysis in order to derive insights and suggest strategies for better market segmentation. 
+The goal of the analyst in this project is to uncover more information about their sales patterns and consumer behavior. The task is to perform initial and exploratory analysis in order to derive insights and suggest strategies for better market segmentation. 
 
 The assumption of this exercise is that Instacart wants t o target different kinds of customers with marketing campaigns and see whether they have an effect on sales. The analysis aims to inform what this strategy might look like. 
 
