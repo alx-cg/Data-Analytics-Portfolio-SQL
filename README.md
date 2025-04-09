@@ -1,4 +1,4 @@
-## PigE.Bank-Anti-Money-Laundering-Analysis
+## Instacart Sales and Market Analysis
 
 ## Project Summary
 This repository emulates the analysis of a fictitious online supermarket's orders data (Instacart), which operates through an app.  
